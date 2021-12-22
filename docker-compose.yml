@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  container-mysql:
+    image: mysql:latest  
+    volumes:
+      - produto-volume:/var/lib/mysql
+    hostname: mysql-hostname
+    networks:
+      - produto-network-teste
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      # MYSQL_DATABASE: pessoa_db   
+
+  container-api:   
+    image: tiagoperroni/imagem-treino:0.4
+    links:
+      - container-mysql
+    environment:
+      DATABASE_HOST: mysql-hostname  
+    networks:
+      - produto-network-teste
+    depends_on:
+      - container-mysql
+    ports:
+      - 8080:8080
+
+volumes:
+  produto-volume:
+
+networks:
+  produto-network-teste:
+    driver: bridge
